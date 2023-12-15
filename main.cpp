@@ -149,8 +149,8 @@ public:
 class Snake {
 private:
     std::vector<Block> snake;
-    Block* food;
     std::vector<sf::Vector2f> turns;
+    Block* food;
     std::vector<int> turn_direction;
     float field_pixel_size;
     int field_block_size;
@@ -212,6 +212,10 @@ public:
                 + block_size * (rand() % (field_block_size - 1));
         food = new Block(block_size, start_position);
         food->set_color(sf::Color::Red);
+    }
+    ~Snake()
+    {
+        delete food;
     }
     void move()
     {
@@ -382,14 +386,20 @@ int main()
                 snake->update_food();
                 food_collisions = 0;
             }
-            if (snake->check_snake_collisions())
+            if (snake->check_snake_collisions()) {
+                delete snake;
                 snake = new Snake(400, 20, sf::Vector2f(100, 100));
+            }
         }
         gamefield.draw(window);
         window.display();
-        if (snake->check_border_collisions())
+        if (snake->check_border_collisions()) {
+			delete snake;
             snake = new Snake(400, 20, sf::Vector2f(100, 100));
+        }
     }
+
+	delete snake;
 
     return 0;
 }
